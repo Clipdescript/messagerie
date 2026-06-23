@@ -49,7 +49,7 @@ jobs:
       - name: Create Release and Upload APK
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/apk/debug/Messagerie.apk
+          files: android/app/build/outputs/apk/debug/app-debug.apk
           name: Release v${{ env.VERSION }}
           tag_name: v${{ env.VERSION }}
           generate_release_notes: true
