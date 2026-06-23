@@ -1,52 +1,48 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
-import path from 'path';
 
 // Configuration
-const REPO = "Clipdescript/messagerie";
-const APK_PATH = "android/app/build/outputs/apk/debug/Messagerie.apk";
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
 
 async function release() {
   console.log(`🚀 Préparation de la release v${VERSION}...`);
 
   try {
-    // 1. Vérifier si le fichier APK existe
-    if (!fs.existsSync(APK_PATH)) {
-      console.error("❌ Erreur: Le fichier APK n'a pas été trouvé. Lancez d'abord le build dans Android Studio.");
-      process.exit(1);
-    }
-
-    // 2. Git push pour s'assurer que le code est à jour
-    console.log("📤 Push du code vers GitHub...");
+    // 1. Git add et commit
+    console.log("📦 Préparation des fichiers...");
     execSync('git add .');
     try {
       execSync(`git commit -m "build: release v${VERSION}"`);
+      console.log("✅ Fichiers commités.");
     } catch (e) {
-      console.log("ℹ️ Rien à commiter.");
+      console.log("ℹ️ Aucun nouveau fichier à commiter.");
     }
-    execSync('git push origin main');
 
-    // 3. Création de la release GitHub via la CLI 'gh'
-    console.log("📦 Création de la release sur GitHub...");
-    const releaseTitle = `Release v${VERSION}`;
-    const notes = `Mise à jour automatique de l'application Messagerie v${VERSION}`;
-    
-    // On supprime la release si elle existe déjà (pour permettre la mise à jour)
+    // 2. Git push du code
+    console.log("📤 Push du code vers GitHub...");
+    execSync('git push origin main'); 
+
+    // 3. Création et push du tag Git (déclenche GitHub Actions)
+    console.log(`🏷️ Création du tag de version v${VERSION}...`);
     try {
-      execSync(`gh release delete v${VERSION} -y --cleanup-tag`);
-    } catch (e) {}
+      // Supprime le tag local et distant s'il existe déjà pour forcer la mise à jour
+      execSync(`git tag -d v${VERSION}`, { stdio: 'ignore' });
+      execSync(`git push origin :refs/tags/v${VERSION}`, { stdio: 'ignore' });
+    } catch (e) {
+      // Ignorer l'erreur si le tag n'existe pas
+    }
+    
+    execSync(`git tag v${VERSION}`);
+    console.log("🚀 Déclenchement de la création de l'APK sur GitHub...");
+    execSync('git push origin --tags');
 
-    // Création de la nouvelle release avec l'APK en asset
-    execSync(`gh release create v${VERSION} "${APK_PATH}" --title "${releaseTitle}" --notes "${notes}"`);
-
-    console.log(`✅ Succès ! Votre application est disponible sur GitHub.`);
-    console.log(`🔗 URL: https://github.com/${REPO}/releases/latest`);
+    console.log(`\n✅ Succès ! Le code a été envoyé avec le tag v${VERSION}.`);
+    console.log(`⚙️ GitHub Actions est en train de générer l'APK et de le publier automatiquement.`);
+    console.log(`🔗 Suivez la progression ici : https://github.com/Clipdescript/messagerie/actions`);    
 
   } catch (error) {
-    console.error("❌ Une erreur est survenue lors de la release :");
-    console.error(error.message);
-    console.log("\n💡 Assurez-vous d'avoir installé la GitHub CLI (gh) et d'être connecté avec 'gh auth login'.");
+    console.error("❌ Une erreur est survenue lors de la release :");       
+    console.error(error.message);     
   }
 }
 
