@@ -1,0 +1,55 @@
+{
+  "id": "/messagerielandaise",
+  "name": "Messagerie",
+  "short_name": "Messagerie",
+  "description": "La messagerie ultra-rapide et décentralisée",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00a884",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle discussion",
+      "url": "/",
+      "icons": [
+        { "src": "/Logo.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Créer un groupe",
+      "url": "/",
+      "icons": [
+        { "src": "/Logo.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Profil",
+      "url": "/",
+      "icons": [
+        { "src": "/Logo.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Réglages",
+      "url": "/",
+      "icons": [
+        { "src": "/Logo.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    }
+  ]
+}
